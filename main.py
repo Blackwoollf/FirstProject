@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import mage as im
+import image as im
 
 # Выбор камеры python open cv уменьшить видео с камеры
 cap = cv2.VideoCapture(0)
