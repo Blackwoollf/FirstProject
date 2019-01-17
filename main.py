@@ -17,16 +17,23 @@ while(True):
     frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     #frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-    # Нахождение диапозона цвета
+    # Нахождение зеленого диапозона цвета
     lower_range = np.array([36,25,25], dtype=np.uint8)
     upper_range = np.array([86,255,255], dtype=np.uint8)
-    mask = cv2.inRange(frame_hsv, lower_range, upper_range)
+    mask1 = cv2.inRange(frame_hsv, lower_range, upper_range)
+
+    # Нахождение синего диапозона цвета
+    mask2 = cv2.inRange(frame_hsv, (110,50,50), (130,255,255))
+    # Объеденение двух масок цветов
+    mask = cv2.bitwise_or(mask1, mask2)
 
     # Фильтр для очистки изображения
     poisk = im.Erode(mask)
 
     # Нахождение радиуса Зеленого цвета
     __, thresh = cv2.threshold(poisk, 127, 255, 0)
+
+    # Задаем переменные
     contours_area = []
     front = cv2.FONT_HERSHEY_DUPLEX
 
@@ -36,18 +43,20 @@ while(True):
     count_contours = 0
 
     for c in contours:
-        # Пперебираем все найденные контуры в цикле
+        # Перебираем все найденные контуры в цикле
         x, y, w, h = cv2.boundingRect(c)
 
         # Вписыват в наш диапозон замкнутый контур прямоугольника
         rect = cv2.minAreaRect(c)
+        # Находит четыре вершины повернутого прямоугольника
         box1 = cv2.boxPoints(rect)
         # округление координат
         box = np.int0(box1)
 
-        # Находим площадь контура
+        # Находим площадь внутри контура
         area2 = cv2.contourArea(c)
-        if 200 < area2 < 20000:
+        if 350 < area2 < 20000:
+            # Рисует простой, толстый или заполненный прямоугольник справа вверх.
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             # Наименует объекты на захваченном изображении
             cv2.putText(frame, str(round(area2)), (x, y), front, 1.0, (0, 255, 0), lineType=cv2.LINE_AA)
@@ -55,7 +64,7 @@ while(True):
             count_contours += 1
          # вычисляем площадь и отсекаем контуры с маленькой площадью
             area = int(rect[1][0] * rect[1][1])
-            if area > 500:
+            if area > 350:
          # По координаты нашего диапозона накладываем контур
                 cv2.drawContours(frame, [box], 0, (0, 255, 255), 2)
     # Счетчик, на выводе экрана подсчитывает объекты
@@ -63,6 +72,7 @@ while(True):
     # Наименует объекты на захваченном изображении
     cv2.putText(frame, str_count, (10, 25), front, 0.5, (0, 255, 0), lineType=cv2.LINE_AA)
 
+    # Изменение размера изображения
     frame = cv2.resize(frame, (1280, 960))
     cv2.imshow("img2", frame)
 
