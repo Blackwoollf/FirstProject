@@ -56,7 +56,7 @@ while(True):
         # Находим площадь внутри контура
         area2 = cv2.contourArea(c)
         if 350 < area2 < 20000:
-            # Рисует простой, толстый или заполненный прямоугольник справа вверх.
+            # Прямоугольник функции рисует контур прямоугольника
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             # Наименует объекты на захваченном изображении
             cv2.putText(frame, str(round(area2)), (x, y), front, 1.0, (0, 255, 0), lineType=cv2.LINE_AA)
@@ -73,7 +73,7 @@ while(True):
     cv2.putText(frame, str_count, (10, 25), front, 0.5, (0, 255, 0), lineType=cv2.LINE_AA)
 
     # Изменение размера изображения
-    frame = cv2.resize(frame, (1280, 960))
+    frame = cv2.resize(frame, (640, 480))
     cv2.imshow("img2", frame)
 
     # waitKey отображение кадра в мили седкундах
